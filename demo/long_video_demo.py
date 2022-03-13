@@ -29,11 +29,11 @@ EXCLUED_STEPS = [
 def parse_args():
     parser = argparse.ArgumentParser(
         description='MMAction2 predict different labels in a long video demo')
-    parser.add_argument('config', help='test config file path')
-    parser.add_argument('checkpoint', help='checkpoint file/url')
-    parser.add_argument('video_path', help='video file/url')
-    parser.add_argument('label', help='label file')
-    parser.add_argument('out_file', help='output result file in video/json')
+    parser.add_argument('--config', help='test config file path')
+    parser.add_argument('--checkpoint', help='checkpoint file/url')
+    parser.add_argument('--video_path', help='video file/url')
+    parser.add_argument('--label', help='label file')
+    parser.add_argument('--out_file', help='output result file in video/json')
     parser.add_argument(
         '--input-step',
         type=int,

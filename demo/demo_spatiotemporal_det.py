@@ -4,14 +4,14 @@ import copy as cp
 import os
 import os.path as osp
 import shutil
-
+import json
 import cv2
 import mmcv
 import numpy as np
 import torch
 from mmcv import DictAction
 from mmcv.runner import load_checkpoint
-
+import sys
 from mmaction.models import build_detector
 from mmaction.utils import import_module_error_func
 
@@ -116,15 +116,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
     parser.add_argument(
         '--config',
-        default=('configs/detection/ava/'
-                 'slowonly_omnisource_pretrained_r101_8x8x1_20e_ava_rgb.py'),
+        default=('configs/detection/acrn/slowfast_acrn_kinetics_pretrained_r50_8x8x1_cosine_10e_ava22_rgb.py'),
         help='spatio temporal detection config file path')
     parser.add_argument(
         '--checkpoint',
-        default=('https://download.openmmlab.com/mmaction/detection/ava/'
-                 'slowonly_omnisource_pretrained_r101_8x8x1_20e_ava_rgb/'
-                 'slowonly_omnisource_pretrained_r101_8x8x1_20e_ava_rgb'
-                 '_20201217-16378594.pth'),
+        default=('https://download.openmmlab.com/mmaction/detection/acrn/slowfast_acrn_kinetics_pretrained_r50_8x8x1_cosine_10e_ava22_rgb/slowfast_acrn_kinetics_pretrained_r50_8x8x1_cosine_10e_ava22_rgb-2be32625.pth'),
         help='spatio temporal detection checkpoint file/url')
     parser.add_argument(
         '--det-config',
@@ -281,9 +277,10 @@ def pack_result(human_detection, result, img_h, img_w):
         return None
     for prop, res in zip(human_detection, result):
         res.sort(key=lambda x: -x[1])
+        array_store = prop.data.cpu().numpy().tolist()
+        array_store = [float(arr) for arr in array_store]
         results.append(
-            (prop.data.cpu().numpy(), [x[0] for x in res], [x[1]
-                                                            for x in res]))
+            (array_store, [x[0] for x in res], [float(x[1]) for x in res]))
     return results
 
 
@@ -357,7 +354,7 @@ def main():
     model.eval()
 
     predictions = []
-
+    
     print('Performing SpatioTemporal Action Detection for each clip')
     assert len(timestamps) == len(human_detections)
     prog_bar = mmcv.ProgressBar(len(timestamps))
@@ -400,6 +397,14 @@ def main():
     results = []
     for human_detection, prediction in zip(human_detections, predictions):
         results.append(pack_result(human_detection, prediction, new_h, new_w))
+    
+    
+    #with open('demo/acrn_res.json', 'w') as f:
+    #    f.write(json.dumps(results))
+
+    #print("Model outputs written to the json file.")
+    #results = json.load(open('demo/acrn_res.json', 'r'))
+    #print("Model results loaded from json file")
 
     def dense_timestamps(timestamps, n):
         """Make it nx frames."""

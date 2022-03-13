@@ -4,7 +4,7 @@ import os.path as osp
 import re
 import warnings
 from operator import itemgetter
-
+import snoop
 import mmcv
 import numpy as np
 import torch
@@ -48,6 +48,7 @@ def init_recognizer(config, checkpoint=None, device='cuda:0', **kwargs):
     if checkpoint is not None:
         load_checkpoint(model, checkpoint, map_location='cpu')
     model.cfg = config
+    print("======================Model loaded to device========================", flush=True)
     model.to(device)
     model.eval()
     return model
@@ -176,10 +177,13 @@ def inference_recognizer(model, video, outputs=None, as_tensor=True, **kwargs):
         data = scatter(data, [device])[0]
 
     # forward the model
+    print("Model input to be fed(type):", type(data))
     with OutputHook(model, outputs=outputs, as_tensor=as_tensor) as h:
         with torch.no_grad():
             scores = model(return_loss=False, **data)[0]
         returned_features = h.layer_outputs if outputs else None
+
+        
 
     num_classes = scores.shape[-1]
     score_tuples = tuple(zip(range(num_classes), scores))
