@@ -108,6 +108,7 @@ def inference_recognizer(model, video, outputs=None, as_tensor=True, **kwargs):
     device = next(model.parameters()).device  # model device
     # build the data pipeline
     test_pipeline = cfg.data.test.pipeline
+    print("Test Pipeline Configuration:", test_pipeline)
     # Alter data pipelines & prepare inputs
     if input_flag == 'dict':
         data = video
@@ -175,7 +176,9 @@ def inference_recognizer(model, video, outputs=None, as_tensor=True, **kwargs):
     if next(model.parameters()).is_cuda:
         # scatter to specified GPU
         data = scatter(data, [device])[0]
-
+    print("Input datatype:", type(data))
+    torch.save(data, "/content/input_dataset.pt")
+    print("Input array stored locally")
     # forward the model
     print("Model input to be fed(type):", type(data))
     with OutputHook(model, outputs=outputs, as_tensor=as_tensor) as h:
