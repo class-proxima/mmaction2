@@ -5,7 +5,7 @@ lfb_prefix_path = 'data/ava/lfb_half'
 max_num_sampled_feat = 5
 window_size = 60
 lfb_channels = 2048
-dataset_modes = ('train', 'val')
+dataset_modes = ('train')
 
 model = dict(
     roi_head=dict(

@@ -116,11 +116,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
     parser.add_argument(
         '--config',
-        default=('configs/detection/acrn/slowfast_acrn_kinetics_pretrained_r50_8x8x1_cosine_10e_ava22_rgb.py'),
+        default=('configs/detection/lfb/lfb_nl_kinetics_pretrained_slowonly_r50_4x16x1_20e_ava_rgb.py'),
         help='spatio temporal detection config file path')
     parser.add_argument(
         '--checkpoint',
-        default=('https://download.openmmlab.com/mmaction/detection/acrn/slowfast_acrn_kinetics_pretrained_r50_8x8x1_cosine_10e_ava22_rgb/slowfast_acrn_kinetics_pretrained_r50_8x8x1_cosine_10e_ava22_rgb-2be32625.pth'),
+        default=('https://download.openmmlab.com/mmaction/detection/lfb/lfb_nl_kinetics_pretrained_slowonly_r50_4x16x1_20e_ava_rgb/lfb_nl_kinetics_pretrained_slowonly_r50_4x16x1_20e_ava_rgb_20210224-2ae136d9.pth'),
         help='spatio temporal detection checkpoint file/url')
     parser.add_argument(
         '--det-config',
@@ -295,8 +295,8 @@ def main():
 
     seg15_folder = '/data/datasets/watchmegrow/sample_segments/'
     video_lst_meta = [f for f in os.listdir(seg15_folder) if f.endswith('.mp4')]
-    json_store_path = '/data/datasets/watchmegrow/sample_acrn_output/'
-    visual_store_path = '/data/datasets/watchmegrow/video_output_acrn/'
+    json_store_path = '/data/datasets/watchmegrow/sample_lfb_output/'
+    visual_store_path = '/data/datasets/watchmegrow/video_output_lfb/'
 
     print("Total videos: ", len(video_lst_meta))
     # Load label_map
@@ -415,7 +415,7 @@ def main():
                 result = model(
                     return_loss=False,
                     img=[input_tensor],
-                    img_metas=[[dict(img_shape=(new_h, new_w))]],
+                    img_metas=[[dict(img_shape=(new_h, new_w), img_key='0f39OWEqJ24,0902')]],
                     proposals=[[proposal]])
                 result = result[0]
                 prediction = []
